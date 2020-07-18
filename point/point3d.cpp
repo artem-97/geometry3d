@@ -19,11 +19,21 @@ double Point3d::getX2() { return x2_; }
 
 double Point3d::getX3() { return x3_; }
 
+Eigen::Vector3d Point3d::getVector() {
+  return Eigen::Vector3d(this->getX1(), this->getX2(), this->getX3());
+}
+
 void Point3d::setX1(double x) { x1_ = x; }
 
 void Point3d::setX2(double x) { x2_ = x; }
 
 void Point3d::setX3(double x) { x3_ = x; }
+
+void Point3d::setVector(const Eigen::Vector3d &v) {
+  setX1(v[0]);
+  setX2(v[1]);
+  setX3(v[2]);
+}
 
 // Utility
 void Point3d::swap(Point3d &other) {

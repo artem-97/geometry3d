@@ -17,7 +17,7 @@ public:
   double getX2();
   double getX3();
 
-  void setVector(Eigen::Vector3d);
+  void setVector(const Eigen::Vector3d &v);
   void setX1(double);
   void setX2(double);
   void setX3(double);
