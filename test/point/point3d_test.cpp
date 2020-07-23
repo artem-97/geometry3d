@@ -1,7 +1,6 @@
 #include "../../src/constants/constants.h"
 #include "../../src/point/coordinates.h"
 #include "../../src/point/point3d.h"
-#include "../../src/point/point3dxyz.h"
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -52,9 +51,13 @@ TEST_F(Point3dTest, Setters) {
   p2.setVector(Eigen::Vector3d(x1, y1, z1));
   ASSERT_EQ(p2.getVector(), Eigen::Vector3d(x1, y1, z1));
   ASSERT_EQ(p2, p1);
+  ASSERT_EQ(p2.isSPH(), false);
+  ASSERT_EQ(p2.isXYZ(), true);
 
   p1.setCoordSystem(CoordSystem::SPH);
   ASSERT_EQ(p1.getCoordSystem(), CoordSystem::SPH);
+  ASSERT_EQ(p1.isSPH(), true);
+  ASSERT_EQ(p2.isXYZ(), false);
 }
 
 TEST_F(Point3dTest, AffineGeometry) {
@@ -105,7 +108,7 @@ TEST_F(Point3dTest, Access) {
 class CoordinatesTest : public ::testing::Test {};
 
 TEST_F(CoordinatesTest, Converts) {
-  double x1(-3.), y1(10.), z1(31234.);
+  double x1(-3.), y1(0.), z1(31234.);
   using v3d = Eigen::Vector3d;
   v3d v1(x1, y1, z1);
   v3d v2(v1);

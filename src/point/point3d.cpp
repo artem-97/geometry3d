@@ -94,9 +94,10 @@ const double &Point3d::operator[](size_t idx) const {
   assert(idx == 0 || idx == 1 || idx == 2);
   if (idx == 0)
     return x1_;
-  if (idx == 1)
+  else if (idx == 1)
     return x2_;
-  if (idx == 2)
+  else
+    // idx == 2
     return x3_;
 }
 
@@ -104,9 +105,10 @@ double &Point3d::operator[](size_t idx) {
   assert(idx == 0 || idx == 1 || idx == 2);
   if (idx == 0)
     return x1_;
-  if (idx == 1)
+  else if (idx == 1)
     return x2_;
-  if (idx == 2)
+  else
+    // idx == 2
     return x3_;
 }
 
@@ -115,3 +117,7 @@ std::ostream &operator<<(std::ostream &os, const Point3d &p) {
   std::cout << "Point: [" << p.x1_ << " " << p.x2_ << " " << p.x3_ << "] ";
   return os;
 }
+
+bool Point3d::isSPH() const { return coords_ == CoordSystem::XYZ; }
+
+bool Point3d::isXYZ() const { return !this->isSPH(); }

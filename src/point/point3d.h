@@ -57,6 +57,9 @@ public:
   void swap(Point3d &);
   friend void swap(Point3d &, Point3d &);
 
+  bool isSPH() const;
+  bool isXYZ() const;
+
 protected:
   CoordSystem coords_ = CoordSystem::XYZ;
 
