@@ -3,7 +3,9 @@
 #include "../constants/constants.h"
 
 #include <Eigen/Dense>
+#include <cmath>
 #include <compare>
+#include <iostream>
 
 class Point3d {
 public:
@@ -36,10 +38,10 @@ public:
   // Affine geometry
   // Acts like our point is radius-vector with coords r(x1_,x_,x_3)
   Point3d &operator+=(Eigen::Vector3d const &);
-  Point3d operator+(Eigen::Vector3d const &);
+  Point3d operator+(Eigen::Vector3d const &) const;
 
   Point3d &operator-=(Eigen::Vector3d const &);
-  Point3d operator-(Eigen::Vector3d const &);
+  Point3d operator-(Eigen::Vector3d const &) const;
 
   // Access
   const double &operator[](size_t) const;

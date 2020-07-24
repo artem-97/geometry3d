@@ -13,6 +13,7 @@ Eigen::Vector3d toSph(const Eigen::Vector3d &v) {
   double r = sqrt(x * x + y * y + z * z);
   double phi = atan2(y, x);
   double theta = acos(z / r);
+
   return Eigen::Vector3d(r, phi, theta);
 }
 

@@ -50,6 +50,7 @@ void Point3d::swap(Point3d &other) {
 }
 
 void swap(Point3d &lhs, Point3d &rhs) { lhs.swap(rhs); }
+
 // Operators
 Point3d &Point3d::operator=(Point3d other) {
   this->swap(other);
@@ -74,7 +75,7 @@ Point3d &Point3d::operator+=(const Eigen::Vector3d &v) {
   return *this;
 }
 
-Point3d Point3d::operator+(const Eigen::Vector3d &v) {
+Point3d Point3d::operator+(const Eigen::Vector3d &v) const {
   auto res = *this;
   return res += v;
 }
@@ -84,7 +85,7 @@ Point3d &Point3d::operator-=(const Eigen::Vector3d &v) {
   return *this;
 }
 
-Point3d Point3d::operator-(const Eigen::Vector3d &v) {
+Point3d Point3d::operator-(const Eigen::Vector3d &v) const {
   auto res = *this;
   return res -= v;
 }
