@@ -2,24 +2,33 @@
 #include "../rigidbody/rigidbody.h"
 #include <Eigen/Dense>
 #include <SFML/Graphics.hpp>
+#include <string>
 #include <utility>
 #include <vector>
 
 class Molecule : public RigidBody {
 public:
-  using Point = std::pair<size_t, Point3d>;
-  using Points = std::vector<Point>;
   // Constructors
   Molecule(const RigidBody &);
+  Molecule(const std::string &);
 
-  void moveLeft();
-  void moveRight();
-  void moveUp();
-  void moveDown();
+  // Getter
+  std::vector<std::pair<size_t, sf::CircleShape>> getAtoms() const;
 
-  void draw();
+  // Translations
+  void moveLeft(double);
+  void moveRight(double);
+  void moveUp(double);
+  void moveDown(double);
+
+  // Rotations
+  void rotateLeft(double);
+  void rotateRight(double);
+  void rotateUp(double);
+  void rotateDown(double);
 
   // Utility
+  friend std::ostream &operator<<(std::ostream &, const Molecule &);
 
 private:
   double scale_factor = 30;

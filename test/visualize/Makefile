@@ -10,11 +10,14 @@ EIGEN_PATH=/home/artem/Soft/eigen
 
 all: $(BUILDDIR)/visualize_test
 
-$(BUILDDIR)/visualize_test: $(BUILDDIR)/visualize.o $(BUILDDIR)/visualize_test.o $(BUILDDIR)/point3d.o $(BUILDDIR)/coordinates.o
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/visualize_test $(BUILDDIR)/visualize_test.o $(BUILDDIR)/rigidbody.o $(BUILDDIR)/visualize.o $(BUILDDIR)/point3d.o $(BUILDDIR)/coordinates.o -L$(SFML_PATH)/lib -lsfml-graphics -lsfml-window -lsfml-system $(GTEST)
+$(BUILDDIR)/visualize_test: $(BUILDDIR)/window.o $(BUILDDIR)/visualize.o $(BUILDDIR)/rigidbody.o $(BUILDDIR)/point3d.o $(BUILDDIR)/coordinates.o
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/window $(BUILDDIR)/window.o $(BUILDDIR)/rigidbody.o $(BUILDDIR)/visualize.o $(BUILDDIR)/point3d.o $(BUILDDIR)/coordinates.o -L$(SFML_PATH)/lib -lsfml-graphics -lsfml-window -lsfml-system $(GTEST)
 
 $(BUILDDIR)/visualize.o: $(SRCDIR)/visualize/visualize.cpp $(SRCDIR)/visualize/visualize.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/visualize/visualize.cpp -o $(BUILDDIR)/visualize.o $(GTEST)
+
+$(BUILDDIR)/window.o: $(SRCDIR)/visualize/window.cpp# $(SRCDIR)/visualize/window.h
+	$(CC) $(CFLAGS) -c -L$(SFML_PATH)/lib -lsfml-graphics -lsfml-window -lsfml-system $(SRCDIR)/visualize/window.cpp -o $(BUILDDIR)/window.o $(GTEST)
 
 $(BUILDDIR)/rigidbody.o: $(SRCDIR)/rigidbody/rigidbody.cpp $(SRCDIR)/rigidbody/rigidbody.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/rigidbody/rigidbody.cpp -o $(BUILDDIR)/rigidbody.o $(GTEST)
@@ -26,12 +29,12 @@ $(BUILDDIR)/coordinates.o: $(SRCDIR)/point/coordinates.cpp $(SRCDIR)/point/coord
 	$(CC) $(CFLAGS) -c $(SRCDIR)/point/coordinates.cpp -o $(BUILDDIR)/coordinates.o $(GTEST)
 
 
-$(BUILDDIR)/visualize_test.o: $(TESTDIR)/visualize_test.cpp
-	$(CC) $(CFLAGS) -c $(TESTDIR)/visualize_test.cpp -o $(BUILDDIR)/visualize_test.o $(GTEST)
+#$(BUILDDIR)/visualize_test.o: $(TESTDIR)/visualize_test.cpp
+#	$(CC) $(CFLAGS) -c $(TESTDIR)/visualize_test.cpp -o $(BUILDDIR)/visualize_test.o $(GTEST)
 
 
 test:
-	export LD_LIBRARY_PATH=$(SFML_PATH)/lib &&	$(BUILDDIR)/visualize_test
+	export LD_LIBRARY_PATH=$(SFML_PATH)/lib &&	$(BUILDDIR)/window
 
 clean:
 	rm -rf $(BUILDDIR)/*_test $(BUILDDIR)/*.o

@@ -13,7 +13,11 @@ class RigidBody;
 class RotationGuard {
 public:
   RotationGuard(RigidBody &);
-  ~RotationGuard(){};
+  ~RotationGuard();
+
+private:
+  RigidBody &rb_;
+  Eigen::Vector3d R_;
 };
 
 class RigidBody {
@@ -24,6 +28,7 @@ public:
   // Constructors
   RigidBody(const Points &);
   RigidBody(const RigidBody &);
+  RigidBody(const std::string &);
 
   // Operators
   RigidBody &operator=(RigidBody);
@@ -40,7 +45,7 @@ public:
   void moveX(double);
   void moveY(double);
   void moveZ(double);
-  void moveTo(Point3d);
+  void moveTo(const Point3d &);
 
   // Rotations in Cartesian coords
   void rotateX(double);
@@ -49,6 +54,7 @@ public:
   void rotateR(Eigen::Vector3d, double);
 
   auto operator<=>(const RigidBody &) const = default;
+
   // Center of Mass Ref.
   Eigen::Vector3d getCenterOfMass() const;
   void toCOMRef();
@@ -57,9 +63,10 @@ public:
   // Utilitty
   void swap(RigidBody &);
   friend void swap(RigidBody &, RigidBody &);
-  friend void ROTATION_ASSERT(const RigidBody &, const RigidBody &);
+  friend class RotationGuard;
 
-private:
+protected:
   Points points_;
+  friend void ROTATION_ASSERT(const RigidBody &, const RigidBody &);
   void rotateUnitT(const Eigen::Vector3d &, double);
 };

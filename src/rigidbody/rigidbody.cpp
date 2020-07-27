@@ -6,15 +6,36 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
 
+RotationGuard::RotationGuard(RigidBody &rb)
+    : rb_(rb), R_(rb.getCenterOfMass()) {
+  rb_.toCOMRef();
+};
+RotationGuard::~RotationGuard() { rb_.moveTo(Point3d(R_)); };
+
 // Constructors
 
 RigidBody::RigidBody(const Points &points) : points_(points) {}
 RigidBody::RigidBody(const RigidBody &other) : points_(other.points_) {}
+
+RigidBody::RigidBody(const std::string &file_name) {
+  std::ifstream input_file(file_name);
+  RigidBody::Points points;
+  std::string number, x, y, z;
+  while (input_file >> number >> x >> y >> z) {
+    size_t mass = std::stod(number);
+    double vx = std::stod(x);
+    double vy = std::stod(y);
+    double vz = std::stod(z);
+    Eigen::Vector3d position(vx, vy, vz);
+    points_.push_back({mass, position});
+  }
+}
 
 // Operators
 RigidBody &RigidBody::operator=(RigidBody other) {
@@ -63,7 +84,7 @@ void RigidBody::moveZ(double ts) {
                 [&](RigidBody::Point &point) { std::get<1>(point) += dx; });
 }
 
-void RigidBody::moveTo(Point3d R) {
+void RigidBody::moveTo(const Point3d &R) {
   moveX(R[0]);
   moveY(R[1]);
   moveZ(R[2]);
@@ -112,6 +133,7 @@ void ROTATION_ASSERT(const RigidBody &rb1, const RigidBody &rb2) {
 }
 
 void RigidBody::rotateUnitT(const Eigen::Vector3d &U, double phi) {
+  RotationGuard lock(*this);
   auto old_rb(*this);
   Eigen::Matrix3d Rt;
   Rt = Eigen::AngleAxisd(phi, U);
