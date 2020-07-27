@@ -2,6 +2,7 @@
 #include "../constants/constants.h"
 
 #include <Eigen/Dense>
+#include <Eigen/Geometry>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -15,11 +16,15 @@
 RigidBody::RigidBody(const Points &points) : points_(points) {}
 RigidBody::RigidBody(const RigidBody &other) : points_(other.points_) {}
 
-// Operator=
+// Operators
 RigidBody &RigidBody::operator=(RigidBody other) {
   this->swap(other);
   return *this;
 }
+
+const RigidBody::Point &RigidBody::operator[](size_t i) const {
+  return points_[i];
+};
 
 // Utility
 void RigidBody::swap(RigidBody &other) {
@@ -28,6 +33,8 @@ void RigidBody::swap(RigidBody &other) {
 }
 
 void swap(RigidBody &lhs, RigidBody &rhs) { lhs.swap(rhs); }
+
+size_t RigidBody::size() const { return points_.size(); }
 
 // Getters / Setters
 RigidBody::Points RigidBody::getPoints() const { return points_; }
@@ -94,7 +101,7 @@ void ROTATION_ASSERT(const RigidBody &rb1, const RigidBody &rb2) {
   while (i < rb1.points_.size()) {
     double old_norm = std::get<1>(rb1.points_[i]).getVector().norm();
     double new_norm = std::get<1>(rb2.points_[i]).getVector().norm();
-    if (abs(old_norm - new_norm) > old_norm) {
+    if (abs(old_norm - new_norm) > EPS) {
       std::cout << "OLD:" << old_norm << " NEW:" << new_norm << " idx:" << i
                 << '\n';
       break;
@@ -104,43 +111,26 @@ void ROTATION_ASSERT(const RigidBody &rb1, const RigidBody &rb2) {
   assert(i == rb1.points_.size());
 }
 
-void RigidBody::rotateX(double phi) {
+void RigidBody::rotateUnitT(const Eigen::Vector3d &U, double phi) {
   auto old_rb(*this);
+  Eigen::Matrix3d Rt;
+  Rt = Eigen::AngleAxisd(phi, U);
   std::for_each(points_.begin(), points_.end(), [&](RigidBody::Point &point) {
-    double &x = std::get<1>(point)[0];
-    double &y = std::get<1>(point)[1];
-    double &z = std::get<1>(point)[2];
-    x = x;
-    y = (y * cos(phi) - z * sin(phi));
-    z = (y * sin(phi) + z * cos(phi));
+    point.second.setVector(Rt * point.second.getVector());
   });
   ROTATION_ASSERT(*this, old_rb);
+}
+
+void RigidBody::rotateX(double phi) {
+  this->rotateUnitT(Eigen::Vector3d::UnitX(), phi);
 }
 
 void RigidBody::rotateY(double phi) {
-  auto old_rb(*this);
-  std::for_each(points_.begin(), points_.end(), [&](RigidBody::Point &point) {
-    double &x = std::get<1>(point)[0];
-    double &y = std::get<1>(point)[1];
-    double &z = std::get<1>(point)[2];
-    x = x * cos(phi) + z * sin(phi);
-    y = y;
-    z = -x * sin(phi) + z * cos(phi);
-  });
-  ROTATION_ASSERT(*this, old_rb);
+  this->rotateUnitT(Eigen::Vector3d::UnitY(), phi);
 }
 
 void RigidBody::rotateZ(double phi) {
-  auto old_rb(*this);
-  std::for_each(points_.begin(), points_.end(), [&](RigidBody::Point &point) {
-    double &x = std::get<1>(point)[0];
-    double &y = std::get<1>(point)[1];
-    double &z = std::get<1>(point)[2];
-    x = x * cos(phi) - y * sin(phi);
-    y = y * sin(phi) + z * cos(phi);
-    z = z;
-  });
-  ROTATION_ASSERT(*this, old_rb);
+  this->rotateUnitT(Eigen::Vector3d::UnitZ(), phi);
 }
 
 void RigidBody::rotateR(Eigen::Vector3d c, double phi) {

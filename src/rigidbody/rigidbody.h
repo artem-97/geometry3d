@@ -9,6 +9,13 @@
 #include <utility>
 #include <vector>
 
+class RigidBody;
+class RotationGuard {
+public:
+  RotationGuard(RigidBody &);
+  ~RotationGuard(){};
+};
+
 class RigidBody {
 public:
   using Point = std::pair<size_t, Point3d>;
@@ -18,11 +25,13 @@ public:
   RigidBody(const Points &);
   RigidBody(const RigidBody &);
 
-  // Operator=
+  // Operators
   RigidBody &operator=(RigidBody);
+  const Point &operator[](size_t) const;
 
   // Getters
   Points getPoints() const;
+  size_t size() const;
 
   // Setters
   void setPoints(Points);
@@ -52,4 +61,5 @@ public:
 
 private:
   Points points_;
+  void rotateUnitT(const Eigen::Vector3d &, double);
 };
